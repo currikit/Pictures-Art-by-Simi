@@ -1,0 +1,135 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { occasions, wa } from '../data/site';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const on = (href: string) => (href === '/' ? path === '/' : path === href || (href === '/shop' && path.startsWith('/products')));
+---
+<header class="site-header">
+  <div class="bar">
+    <a href="/" class="brand"><Logo /></a>
+
+    <nav id="site-nav" class="nav" aria-label="Main">
+      <ul class="links">
+        <li><a href="/" aria-current={on('/') ? 'page' : undefined}>Home</a></li>
+        <li><a href="/shop" aria-current={on('/shop') ? 'page' : undefined}>Shop</a></li>
+        <li class="has-menu">
+          <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="occ-menu">Occasions <Icon name="chevron" size={16} /></button>
+          <ul id="occ-menu" class="submenu" hidden>
+            {occasions.map((o) => <li><a href={`/shop?occasion=${o.slug}`}>{o.name}</a></li>)}
+          </ul>
+        </li>
+        <li><a href="/custom-order" aria-current={on('/custom-order') ? 'page' : undefined}>Custom Order</a></li>
+        <li><a href="/reviews" aria-current={on('/reviews') ? 'page' : undefined}>Reviews</a></li>
+        <li><a href="/about" aria-current={on('/about') ? 'page' : undefined}>About</a></li>
+        <li class="only-mobile"><a href="/hamper-builder" aria-current={on('/hamper-builder') ? 'page' : undefined}>Build a hamper</a></li>
+        <li class="only-mobile"><a href="/help" aria-current={on('/help') ? 'page' : undefined}>Help</a></li>
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <button type="button" class="icon-btn search-btn" aria-expanded="false" aria-controls="site-search" aria-label="Search gifts"><Icon name="search" /></button>
+      <a class="btn btn-pink wa-pill" href={wa('Hi Simi! I want to order a gift.')}><Icon name="whatsapp" size={18} /><span>Order on WhatsApp</span></a>
+      <button type="button" class="icon-btn menu-btn" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><Icon name="menu" class="i-open" /><Icon name="close" class="i-close" /></button>
+    </div>
+  </div>
+
+  <div id="site-search" class="search-panel" hidden>
+    <form class="search-form" action="/shop" method="get" role="search">
+      <label for="q" class="visually-hidden">Search gifts</label>
+      <Icon name="search" size={20} />
+      <input id="q" name="q" type="search" class="search-input" placeholder="Search caricatures, frames, hampers..." autocomplete="off" />
+      <button class="btn btn-pink" type="submit">Search</button>
+    </form>
+  </div>
+</header>
+
+<style>
+  .site-header { position: sticky; top: 0; z-index: 40; background: rgba(255, 255, 255, .94); backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--line); }
+  .bar { max-width: 1280px; margin: 0 auto; padding: 10px max(var(--gutter), env(safe-area-inset-right, 0px)) 10px max(var(--gutter), env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 24px; min-height: 76px; }
+  .brand { text-decoration: none; display: inline-flex; }
+  .nav { margin-left: auto; }
+  .links { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 4px; }
+  .links > li > a, .menu-toggle {
+    position: relative; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px;
+    color: var(--ink); text-decoration: none; font: 500 15px/1 var(--font); background: none; border: 0; cursor: pointer;
+  }
+  .links > li > a::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2.5px; border-radius: 2px; background: var(--pink); transform: scaleX(0); transform-origin: left; transition: transform 240ms var(--ease); }
+  .links > li > a:hover { color: var(--pink-deep); }
+  .links > li > a:hover::after, .links > li > a[aria-current='page']::after { transform: scaleX(1); }
+  .links > li > a[aria-current='page'] { font-weight: 600; }
+  .menu-toggle:hover { color: var(--pink-deep); }
+  .menu-toggle :global(svg) { transition: transform 200ms var(--ease); }
+  .menu-toggle[aria-expanded='true'] :global(svg) { transform: rotate(180deg); }
+  .has-menu { position: relative; }
+  .submenu { position: absolute; top: calc(100% + 8px); left: 0; min-width: 220px; list-style: none; margin: 0; padding: 8px; background: var(--white); border-radius: 18px; box-shadow: 0 24px 48px -20px rgba(43, 27, 61, .35); border: 1px solid var(--line); }
+  .submenu a { display: flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 12px; color: var(--ink); text-decoration: none; font-size: 15px; }
+  .submenu a:hover { background: var(--p-pink-2); color: var(--pink-deep); }
+  .only-mobile { display: none; }
+
+  .tools { display: flex; align-items: center; gap: 8px; }
+  .icon-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; color: var(--ink); cursor: pointer; transition: background-color 180ms var(--ease), color 180ms var(--ease); }
+  .icon-btn:hover, .icon-btn[aria-expanded='true'] { background: var(--p-pink-2); color: var(--pink-deep); }
+  .wa-pill { min-height: 44px; padding: 0 18px; font-size: 14.5px; }
+  .menu-btn { display: none; }
+  .menu-btn :global(.i-close) { display: none; }
+
+  .search-panel { border-top: 1px solid var(--line); background: var(--white); }
+  .search-form { max-width: 760px; margin: 0 auto; padding: 14px var(--gutter); display: flex; align-items: center; gap: 12px; color: var(--muted); }
+  .search-input { flex: 1; min-width: 0; border: 0; background: transparent; font: 400 17px/1.4 var(--font); color: var(--ink); min-height: 48px; }
+  .search-input:focus { outline: none; }
+  .search-form:focus-within { box-shadow: inset 0 -2px 0 var(--pink); }
+
+  @media (max-width: 1060px) {
+    .wa-pill span { display: none; }
+    .wa-pill { width: 44px; padding: 0; }
+  }
+  @media (max-width: 900px) {
+    .bar { gap: 8px; min-height: 64px; }
+    .menu-btn { display: inline-grid; }
+    .tools { margin-left: auto; }
+    .wa-pill { display: none; }
+    .nav { position: absolute; left: 0; right: 0; top: 100%; margin: 0; background: var(--white); border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -24px rgba(43, 27, 61, .3); padding: 8px max(var(--gutter), env(safe-area-inset-left, 0px)) 24px; display: none; max-height: calc(100vh - 64px); overflow-y: auto; }
+    .nav.open { display: block; }
+    .links { flex-direction: column; align-items: stretch; gap: 0; }
+    .links > li > a, .menu-toggle { width: 100%; min-height: 54px; padding: 0 4px; font-size: 18px; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .links > li > a::after { display: none; }
+    .links > li > a[aria-current='page'] { color: var(--pink-deep); }
+    .submenu { position: static; box-shadow: none; border: 0; padding: 4px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+    .submenu[hidden] { display: none; }
+    .submenu a { border: 1.5px solid var(--line); border-radius: 999px; min-height: 40px; }
+    .only-mobile { display: block; }
+    .menu-btn[aria-expanded='true'] :global(.i-open) { display: none; }
+    .menu-btn[aria-expanded='true'] :global(.i-close) { display: block; }
+  }
+  @media (max-width: 380px) { .brand :global(.script) { font-size: 22px; } }
+</style>
+
+<script>
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s);
+  const menuBtn = $<HTMLButtonElement>('.menu-btn');
+  const nav = $<HTMLElement>('#site-nav');
+  const occBtn = $<HTMLButtonElement>('.menu-toggle');
+  const occ = $<HTMLElement>('#occ-menu');
+  const searchBtn = $<HTMLButtonElement>('.search-btn');
+  const search = $<HTMLElement>('#site-search');
+
+  const setOcc = (open: boolean) => { occBtn?.setAttribute('aria-expanded', String(open)); if (occ) occ.hidden = !open; };
+  const setNav = (open: boolean) => { menuBtn?.setAttribute('aria-expanded', String(open)); menuBtn?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); nav?.classList.toggle('open', open); };
+  const setSearch = (open: boolean) => { searchBtn?.setAttribute('aria-expanded', String(open)); if (search) search.hidden = !open; if (open) $<HTMLInputElement>('#q')?.focus(); };
+
+  occBtn?.addEventListener('click', () => setOcc(occBtn.getAttribute('aria-expanded') !== 'true'));
+  menuBtn?.addEventListener('click', () => { const open = menuBtn.getAttribute('aria-expanded') !== 'true'; setNav(open); if (open) setSearch(false); });
+  searchBtn?.addEventListener('click', () => { const open = searchBtn.getAttribute('aria-expanded') !== 'true'; setSearch(open); if (open) setNav(false); });
+
+  document.addEventListener('click', (e) => {
+    const t = e.target as Node;
+    if (occ && !occ.hidden && !occBtn?.contains(t) && !occ.contains(t) && window.matchMedia('(min-width: 901px)').matches) setOcc(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (occBtn?.getAttribute('aria-expanded') === 'true') { setOcc(false); occBtn.focus(); }
+    else if (menuBtn?.getAttribute('aria-expanded') === 'true') { setNav(false); menuBtn.focus(); }
+    else if (searchBtn?.getAttribute('aria-expanded') === 'true') { setSearch(false); searchBtn.focus(); }
+  });
+</script>

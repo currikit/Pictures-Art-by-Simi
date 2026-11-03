@@ -1,0 +1,61 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site, wa, occasions } from '../data/site';
+---
+<footer class="footer">
+  <div class="wrap">
+    <div class="top">
+      <div class="brandcol">
+        <a href="/" class="brand"><Logo /></a>
+        <p class="muted">Personalised gifts made by hand in Mumbai and shipped all over India.</p>
+        <a class="btn btn-pink" href={wa('Hi Simi! I want to order a gift.')}><Icon name="whatsapp" size={18} /> Order on WhatsApp</a>
+      </div>
+      <nav aria-labelledby="f-shop">
+        <h2 id="f-shop" class="fh">Shop</h2>
+        <ul>
+          <li><a href="/shop">All gifts</a></li>
+          <li><a href="/hamper-builder">Build a hamper</a></li>
+          <li><a href="/custom-order">Custom order</a></li>
+          <li><a href="/#try">Try your photo</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="f-occ">
+        <h2 id="f-occ" class="fh">Occasions</h2>
+        <ul>{occasions.slice(0, 5).map((o) => <li><a href={`/shop?occasion=${o.slug}`}>{o.name}</a></li>)}</ul>
+      </nav>
+      <div>
+        <h2 class="fh">Say hello</h2>
+        <ul class="contact">
+          <li><a href={wa('Hi Simi!')}><Icon name="whatsapp" size={18} /> {site.whatsappDisplay}</a></li>
+          <li><a href={site.instagram}><Icon name="instagram" size={18} /> {site.instagramHandle}</a></li>
+          <li><a href={`mailto:${site.email}`}><Icon name="mail" size={18} /> {site.email}</a></li>
+          <li><a href="/about">About Simi</a></li>
+          <li><a href="/help">Help and policies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="base">
+      <p>© {new Date().getFullYear()} {site.legalName}. Made with love in Mumbai.</p>
+      <p>Website by <a href="https://www.instagram.com/currikit/">Currikit</a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: linear-gradient(180deg, var(--p-pink-2), var(--p-lav)); padding-block: clamp(64px, 8vw, 96px) 24px; margin-top: 0; }
+  .top { display: grid; grid-template-columns: 1.3fr 0.8fr 0.8fr 1.3fr; gap: 40px; }
+  @media (max-width: 900px) { .top { grid-template-columns: repeat(2, minmax(0, 1fr)); } .brandcol { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .top { grid-template-columns: 1fr; gap: 32px; } }
+  .brandcol { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .brandcol p { margin: 0; max-width: 34ch; }
+  .brand { text-decoration: none; }
+  .fh { font-size: 14px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 14px; color: var(--ink); }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  ul a { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; color: var(--ink); text-decoration: none; font-size: 15px; overflow-wrap: anywhere; word-break: normal; }
+  .contact a { overflow-wrap: normal; white-space: nowrap; }
+  ul a:hover { color: var(--pink-deep); }
+  .base { margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(43, 27, 61, .1); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 14px; color: var(--muted); }
+  .base p { margin: 0; display: flex; align-items: center; gap: 4px; }
+  .base a { display: inline-flex; align-items: center; min-height: 44px; }
+</style>

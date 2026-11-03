@@ -1,0 +1,98 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { products, occasions, recipients, categories, img, wa, priceLabel, site, type Product } from '../../data/site';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Product };
+const cat = categories.find((c) => c.slug === p.category);
+const occ = occasions.filter((o) => p.occasions.includes(o.slug));
+const who = recipients.filter((r) => p.for.includes(r.slug));
+const related = products.filter((x) => x.slug !== p.slug && (x.category === p.category || x.occasions.some((o) => p.occasions.includes(o)))).slice(0, 4);
+const message = `Hi Simi! I'd like to order the ${p.name}${p.photoUpload ? '. I will send my photos here.' : '.'}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: p.name,
+  description: p.blurb,
+  image: new URL((await getImage({ src: img(p.image), width: 640, format: 'jpg' })).src, Astro.site).toString(),
+  brand: { '@type': 'Brand', name: site.name },
+  ...(p.priceFrom ? { offers: { '@type': 'Offer', priceCurrency: 'INR', price: p.priceFrom, availability: 'https://schema.org/MadeToOrder' } } : {}),
+};
+---
+<Base title={p.name} description={`${p.blurb} Handmade in Mumbai by Simi, shipped all over India.`} waMessage={message} jsonLd={jsonLd}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/shop">Shop</a><span aria-hidden="true">/</span><a href={`/shop?category=${p.category}`}>{cat?.name}</a>
+  </nav>
+
+  <article class="wrap product">
+    <figure class="pol big" style="--r:-1.5deg" data-develop>
+      <Image src={img(p.image)} alt={p.alt} widths={[480, 640]} sizes="(max-width: 860px) 90vw, 520px" loading="eager" />
+      <figcaption class="cap">made by Simi</figcaption>
+    </figure>
+
+    <div class="info">
+      <h1 class="h2">{p.name}</h1>
+      <p class={p.priceFrom ? 'price big-price' : 'price ask'}>{priceLabel(p)}</p>
+      <p class="blurb">{p.blurb}</p>
+
+      {p.customise.length > 0 && (
+        <div class="block">
+          <h2 class="h3">You choose</h2>
+          <ul class="ticks">{p.customise.map((c) => <li>{c}</li>)}</ul>
+        </div>
+      )}
+
+      <div class="block">
+        <h2 class="h3">Made to order</h2>
+        <p>{p.makingDays ? `Ready in about ${p.makingDays} days, then shipped anywhere in India.` : 'Simi confirms the making time and delivery date on WhatsApp before she starts.'}</p>
+      </div>
+
+      <div class="ctas">
+        <a class="btn btn-red" href={wa(message)}>Order on WhatsApp</a>
+        <a class="btn btn-line" href={`/custom-order?product=${p.slug}`}>Fill the order form</a>
+      </div>
+      {p.photoUpload && <p class="muted small">Want to see your photo on it first? <a href="/#try">Try it on the homepage</a>.</p>}
+
+      <div class="tags">
+        {occ.map((o) => <a class="chip" href={`/shop?occasion=${o.slug}`}>{o.name}</a>)}
+        {who.map((r) => <a class="chip" href={`/shop?for=${r.slug}`}>{r.name}</a>)}
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="wrap section" aria-labelledby="rel-title">
+      <h2 id="rel-title" class="h2 rel-title">You might also like</h2>
+      <div class="grid">
+        {related.map((r, i) => <ProductCard product={r} tilt={[-2, 1.5, -1, 2][i]} delay={i * 80} />)}
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .crumbs { display: flex; gap: 10px; align-items: center; padding-top: 20px; font-size: 15px; color: var(--faded); }
+  .crumbs a { min-height: 44px; display: inline-flex; align-items: center; }
+  .product { display: flex; flex-wrap: wrap; gap: clamp(32px, 6vw, 80px); align-items: flex-start; padding-bottom: clamp(48px, 7vw, 88px); }
+  .big { flex: 1 1 340px; max-width: 540px; margin: 0; padding: 14px 14px 40px; }
+  .big .cap { font-size: 18px; }
+  .info { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 18px; max-width: 560px; }
+  .big-price { font-size: 26px; margin: 0; }
+  .ask { margin: 0; color: var(--muted); font-size: 17px; font-weight: 500; }
+  .blurb { margin: 0; font-size: 18px; }
+  .block { display: flex; flex-direction: column; gap: 6px; }
+  .block p { margin: 0; }
+  .ticks { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .ticks li { background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 15px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .small { font-size: 15px; margin: 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags .chip { min-height: 40px; font-size: 15px; }
+  .rel-title { margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 36px 24px; }
+  @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; } }
+</style>

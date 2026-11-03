@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { img, wa, site } from '../data/site';
+const wall = [
+  ['25-sisters-caricature-canvas.jpg', 'Illustrated portrait of two sisters on canvas', -3],
+  ['19-resin-flower-keychain.jpg', 'Resin keychain with pressed flowers', 2],
+  ['08-vintage-scrapbook-frame.jpg', 'Vintage scrapbook photo frame', -1],
+  ['15-wavy-fridge-magnets.jpg', 'Wavy colourful photo magnets', 3],
+] as const;
+---
+<Base title="About Simi" description="Simi makes personalised gifts by hand in Mumbai: caricatures, photo frames, resin keychains, magnets and hampers, shipped all over India.">
+  <section class="intro page-head">
+    <div class="wrap intro-in">
+      <div class="stack">
+        <p class="eyebrow">Hi, I'm Simi</p>
+        <h1 class="h1">Every gift starts as someone's photo</h1>
+      </div>
+      <figure class="pol portrait" style="--r:3deg">
+        <div class="ph"><span class="placeholder-note">[Photo of Simi or her workspace: waiting for Simi]</span></div>
+        <figcaption class="cap">the studio, Mumbai</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section wrap story">
+    <div class="text">
+      <p class="big">Pictures art by Simi started as a small gallery of photo gifts on Instagram. Today it's caricatures, photo frames, resin keychains, fridge magnets, wallet cards and hampers, each one made by hand in Mumbai for one person.</p>
+      <p class="placeholder-note">[Two or three lines in Simi's own words: how she started, what she loves making, her favourite order. Waiting for Simi.]</p>
+      <h2 class="h3">How Simi works</h2>
+      <ul class="points">
+        <li><strong>Made to order.</strong> Nothing sits on a shelf. Your piece is started when you order it.</li>
+        <li><strong>Your photos, redrawn or printed.</strong> Caricatures are illustrated from your picture; frames, magnets and keychains use your prints.</li>
+        <li><strong>Packed by hand.</strong> Hampers are put together item by item, in the theme you choose.</li>
+        <li><strong>Shipped anywhere in India.</strong> From Mumbai to your door.</li>
+      </ul>
+      <a class="btn btn-red" href={wa('Hi Simi! I saw your story on the website.')}>Say hi on WhatsApp</a>
+    </div>
+    <div class="wall" aria-label="Some of Simi's work">
+      {wall.map(([f, a, r]) => (
+        <figure class="pol" style={`--r:${r}deg`} data-develop>
+          <Image src={img(f)} alt={a} widths={[240, 400]} sizes="(max-width: 640px) 45vw, 220px" />
+        </figure>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0; }
+  .intro-in { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between; }
+  .intro-in .stack { flex: 1 1 380px; gap: 14px; max-width: 680px; }
+
+  .portrait { margin: 0; width: min(300px, 70vw); padding: 12px 12px 34px; }
+  .ph { aspect-ratio: 1; background: var(--p-pink-2); border-radius: 14px; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+  .story { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+  .text { flex: 1 1 420px; max-width: 640px; display: flex; flex-direction: column; gap: 18px; }
+  .text p { margin: 0; }
+  .big { font-size: 21px; line-height: 1.5; }
+  .points { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .text .btn { align-self: flex-start; }
+  .wall { flex: 1 1 320px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .wall .pol { margin: 0; }
+  .wall .pol:nth-child(even) { margin-top: 28px; }
+</style>

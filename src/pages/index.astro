@@ -1,0 +1,242 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProductCard from '../components/ProductCard.astro';
+import DevelopStrip from '../components/DevelopStrip.astro';
+import Icon from '../components/Icon.astro';
+import { site, img, wa, products } from '../data/site';
+
+const cats = [
+  { slug: 'hampers', name: 'Hampers', file: '05-rakhi-evil-eye-hamper.jpg', alt: 'Snack hamper in a clear acrylic tote', tint: 'var(--p-pink)', icon: 'gift' },
+  { slug: 'frames', name: 'Frames', file: '04-black-gingham-frames.jpg', alt: 'Black gingham polaroid frames', tint: 'var(--p-lav)', icon: 'frame' },
+  { slug: 'caricatures', name: 'Caricatures', file: '23-couple-caricature-canvas.jpg', alt: 'Illustrated couple caricature on canvas', tint: 'var(--p-mint)', icon: 'pen' },
+  { slug: 'cards', name: 'Wallet Cards', file: '28-distance-map-wallet-card.jpg', alt: 'Distance map wallet card for couples', tint: 'var(--p-peach)', icon: 'heart' },
+  { slug: 'keychains', name: 'Keychains', file: '19-resin-flower-keychain.jpg', alt: 'Resin keychain with pressed flowers and a photo', tint: 'var(--p-lemon)', icon: 'sparkles' },
+  { slug: 'magnets', name: 'Fridge Magnets', file: '09-filmy-polaroid-magnets.jpg', alt: 'Film strip polaroid fridge magnet', tint: 'var(--p-sky)', icon: 'camera' },
+];
+const best = products.filter((p) => p.bestSeller).slice(0, 8);
+const steps = [
+  { icon: 'upload', title: 'Upload your photos', text: 'Pick a gift and send Simi your favourite pictures on WhatsApp.' },
+  { icon: 'pen', title: 'Customise your gift', text: 'Names, a message, colours and the date you need it.' },
+  { icon: 'gift', title: 'We create with love', text: 'Every piece is made by hand in Mumbai, just for you.' },
+  { icon: 'truck', title: 'Delivered across India', text: 'Packed with care and shipped to any address in India.' },
+];
+---
+<Base title={site.name}>
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-in">
+      <div class="copy">
+        <p class="eyebrow">Personalised gifts studio</p>
+        <h1 id="hero-title" class="h1">Turn your memories into <span class="accent">personalised gifts<svg class="heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 27C6 20 2 14 3.5 8.6 5 3.6 11.4 2.4 16 8c4.6-5.6 11-4.4 12.5.6C30 14 26 20 16 27Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span></h1>
+        <p class="lede">Custom hampers, frames, keychains, wallet cards, magnets and caricatures, made by hand with your photos and shipped all over India.</p>
+        <div class="ctas">
+          <a class="btn btn-pink" href="/shop"><Icon name="bag" size={18} /> Shop collection <Icon name="arrow" size={18} class="arrow" /></a>
+          <a class="btn btn-line" href="/custom-order"><Icon name="sparkles" size={18} /> Create custom order</a>
+        </div>
+      </div>
+
+      <div class="art" aria-label="Some of Simi's handmade gifts">
+        <div class="pedestal" aria-hidden="true"></div>
+        <figure class="main"><Image src={img('03-birthday-girly-hamper-box.jpg')} alt="Birthday hamper box with makeup, scrunchies, a satin bow and flowers" widths={[420, 640]} sizes="(max-width: 900px) 60vw, 380px" loading="eager" /></figure>
+        <figure class="snap a"><Image src={img('23-couple-caricature-canvas.jpg')} alt="Couple caricature on canvas board" widths={[200, 360]} sizes="160px" loading="eager" /></figure>
+        <figure class="snap b idle"><Image src={img('09-filmy-polaroid-magnets.jpg')} alt="Polaroid fridge magnet with a film strip border" widths={[200, 360]} sizes="150px" loading="eager" /></figure>
+        <figure class="round c"><Image src={img('19-resin-flower-keychain.jpg')} alt="Round resin keychain with pressed flowers and a photo" widths={[200, 360]} sizes="150px" loading="eager" /></figure>
+        <svg class="spark s1" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z" fill="currentColor"/></svg>
+        <svg class="spark s2" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 27C6 20 2 14 3.5 8.6 5 3.6 11.4 2.4 16 8c4.6-5.6 11-4.4 12.5.6C30 14 26 20 16 27Z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <section class="wrap trust-wrap" aria-label="Why order from Simi">
+    <ul class="trust">
+      <li><Icon name="truck" size={26} /><span>Ships all over India</span></li>
+      <li><Icon name="heart" size={26} /><span>Handmade with love</span></li>
+      <li><Icon name="chat" size={26} /><span>Easy WhatsApp orders</span></li>
+      <li><Icon name="gift" size={26} /><span>Perfect for every occasion</span></li>
+    </ul>
+  </section>
+
+  <!-- Categories -->
+  <section class="section wrap" aria-labelledby="cat-title">
+    <div class="head">
+      <h2 id="cat-title" class="h2 underline">Shop by category</h2>
+      <a class="more" href="/shop">View all gifts <Icon name="arrow" size={18} /></a>
+    </div>
+    <ul class="cats">
+      {cats.map((c) => (
+        <li>
+          <a class="cat" href={`/shop?category=${c.slug}`} style={`--tint:${c.tint}`}>
+            <span class="cat-img"><Image src={img(c.file)} alt="" widths={[240, 400]} sizes="(max-width: 640px) 30vw, 180px" /></span>
+            <span class="cat-label"><Icon name={c.icon} size={16} />{c.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Hamper banner -->
+  <section class="wrap" aria-labelledby="hb-title">
+    <div class="banner">
+      <figure class="banner-img"><Image src={img('20-love-story-hamper-kit.jpg')} alt="Couple gift kit with a love story frame, polaroids, cards and chocolate" widths={[320, 560]} sizes="(max-width: 760px) 80vw, 300px" /></figure>
+      <div class="banner-copy">
+        <p class="eyebrow">Create something special</p>
+        <h2 id="hb-title" class="h2">Build your own custom hamper</h2>
+        <p class="muted">Pick your favourites, add a message and choose the box. Simi packs it by hand.</p>
+      </div>
+      <a class="btn btn-pink banner-cta" href="/hamper-builder">Build your hamper <Icon name="arrow" size={18} class="arrow" /></a>
+    </div>
+  </section>
+
+  <!-- Best sellers -->
+  <section class="section wrap" aria-labelledby="best-title">
+    <div class="head">
+      <h2 id="best-title" class="h2 underline">Loved lately</h2>
+      <a class="more" href="/shop">See all {products.length} gifts <Icon name="arrow" size={18} /></a>
+    </div>
+    <div class="grid">
+      {best.map((p) => <ProductCard product={p} />)}
+    </div>
+  </section>
+
+  <!-- Try your photo -->
+  <DevelopStrip />
+
+  <!-- How it works -->
+  <section class="section wrap how" aria-labelledby="how-title">
+    <div class="head center">
+      <p class="eyebrow">Simple and personal</p>
+      <h2 id="how-title" class="h2">How it works</h2>
+    </div>
+    <ol class="steps">
+      {steps.map((s) => (
+        <li>
+          <span class="step-icon"><Icon name={s.icon} size={26} /></span>
+          <h3 class="h3">{s.title}</h3>
+          <p class="muted">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Reviews teaser -->
+  <section class="wrap rev-wrap" aria-labelledby="rev-title">
+    <div class="rev">
+      <span class="quote" aria-hidden="true">“</span>
+      <h2 id="rev-title" class="h3 rev-q">"One of the best feedback ever"</h2>
+      <p class="muted">That's how Simi captioned a client's voice note after delivery. Hear it, and read more messages from happy customers.</p>
+      <a class="btn btn-line" href="/reviews">Read reviews <Icon name="arrow" size={18} class="arrow" /></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero { background: radial-gradient(120% 90% at 85% 10%, var(--p-lav) 0%, rgba(239, 233, 252, 0) 55%), linear-gradient(160deg, var(--p-pink) 0%, var(--p-pink-2) 60%, var(--bg) 100%); overflow: hidden; }
+  .hero-in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 72px); padding-block: clamp(48px, 7vw, 104px) clamp(56px, 8vw, 112px); }
+  .copy { display: flex; flex-direction: column; gap: 22px; }
+  .copy .h1 { max-width: 13ch; }
+  .accent { position: relative; white-space: nowrap; }
+  .heart { width: .62em; height: .58em; margin-left: .12em; vertical-align: .2em; color: var(--pink); }
+  .ctas { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 6px; }
+
+  .art { position: relative; aspect-ratio: 1 / .92; width: 100%; max-width: 560px; justify-self: center; }
+  .pedestal { position: absolute; left: 12%; right: 8%; bottom: 2%; height: 30%; border-radius: 50%; background: radial-gradient(closest-side, #F8CFDD, rgba(248, 207, 221, 0)); }
+  .art figure { margin: 0; position: absolute; overflow: hidden; background: #fff; }
+  .art :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .main { left: 17%; top: 11%; width: 64%; aspect-ratio: 1; border-radius: 28px; box-shadow: 0 30px 60px -30px rgba(43, 27, 61, .45); }
+  .snap { padding: 8px 8px 26px; border-radius: 10px; box-shadow: 0 18px 36px -18px rgba(43, 27, 61, .45); }
+  .snap :global(img) { aspect-ratio: 1; height: auto; border-radius: 4px; }
+  .a { left: 1%; top: 2%; width: 29%; rotate: -7deg; }
+  .b { right: 1%; top: 6%; width: 26%; rotate: 8deg; }
+  .round { right: 2%; bottom: 2%; width: 28%; aspect-ratio: 1; border-radius: 50%; border: 6px solid #fff; box-shadow: 0 18px 36px -18px rgba(43, 27, 61, .45); }
+  .spark { position: absolute; color: var(--pink); }
+  .s1 { width: 26px; left: 6%; bottom: 14%; color: #F4B740; }
+  .s2 { width: 40px; right: 31%; top: 0; rotate: 12deg; }
+
+  /* Trust */
+  .trust-wrap { margin-top: -40px; position: relative; z-index: 2; }
+  .trust { list-style: none; margin: 0; padding: 22px clamp(16px, 3vw, 32px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; background: var(--white); border-radius: 24px; box-shadow: 0 20px 44px -28px rgba(43, 27, 61, .35); }
+  .trust li { display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 500; font-size: 15px; line-height: 1.3; color: var(--ink); }
+  .trust li + li { border-left: 1px solid var(--line); }
+  .trust :global(svg) { color: var(--pink); flex: none; }
+
+  /* Section heads */
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 36px; }
+  .head.center { flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  .underline { position: relative; padding-bottom: 10px; }
+  .underline::after { content: ''; position: absolute; left: 0; bottom: 0; width: 64px; height: 4px; border-radius: 4px; background: var(--pink); }
+  .more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 600; font-size: 15px; text-decoration: none; }
+  .more :global(svg) { transition: transform 200ms var(--ease); }
+  .more:hover :global(svg) { transform: translateX(4px); }
+
+  /* Categories */
+  .cats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; }
+  .cat { position: relative; display: block; border-radius: var(--radius); background: var(--tint); padding: 14px 14px 58px; text-decoration: none; transition: transform 260ms var(--ease), box-shadow 260ms var(--ease); }
+  .cat:hover { transform: translateY(-6px); box-shadow: 0 24px 40px -24px rgba(43, 27, 61, .35); }
+  .cat-img { display: block; aspect-ratio: 1; border-radius: 16px; overflow: hidden; }
+  .cat-img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms var(--ease); }
+  .cat:hover .cat-img :global(img) { transform: scale(1.06); }
+  .cat-label { position: absolute; left: 50%; bottom: 14px; translate: -50% 0; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; background: #fff; color: var(--ink); font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 999px; box-shadow: 0 8px 18px -12px rgba(43, 27, 61, .5); }
+  .cat-label :global(svg) { color: var(--pink); }
+  .cat:hover .cat-label { color: var(--pink-deep); }
+
+  /* Banner */
+  .banner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(24px, 4vw, 56px); padding: clamp(24px, 4vw, 40px) clamp(24px, 5vw, 56px); border-radius: 32px; background: linear-gradient(110deg, var(--p-pink) 0%, var(--p-pink-2) 45%, var(--p-lav) 100%); }
+  .banner-img { margin: 0; width: clamp(140px, 18vw, 220px); aspect-ratio: 1; border-radius: 24px; overflow: hidden; rotate: -4deg; box-shadow: 0 24px 40px -24px rgba(43, 27, 61, .45); border: 6px solid #fff; }
+  .banner-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .banner-copy { display: flex; flex-direction: column; gap: 12px; }
+  .banner-copy p { margin: 0; }
+
+  /* Product grid */
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 24px; }
+
+  /* How it works */
+  .how { padding-top: 0; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; counter-reset: s; }
+  .steps li { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 0 8px; }
+  .steps li:not(:last-child)::after { content: ''; position: absolute; top: 36px; left: calc(50% + 52px); right: calc(-50% + 52px); border-top: 2px dashed #F2C2D4; }
+  .step-icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--p-pink); color: var(--pink-deep); }
+  .steps li:nth-child(2) .step-icon { background: var(--p-lav); }
+  .steps li:nth-child(3) .step-icon { background: var(--p-mint); }
+  .steps li:nth-child(4) .step-icon { background: var(--p-peach); }
+  .steps p { margin: 0; font-size: 15px; max-width: 26ch; }
+
+  /* Reviews */
+  .rev-wrap { padding-bottom: clamp(64px, 9vw, 120px); }
+  .rev { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: clamp(40px, 6vw, 64px) clamp(24px, 6vw, 80px); border-radius: 32px; background: var(--p-mint); overflow: hidden; }
+  .rev p { margin: 0; max-width: 52ch; }
+  .rev-q { font-size: clamp(22px, 2.6vw, 30px); font-weight: 600; }
+  .quote { font: 700 120px/0.6 var(--font); color: rgba(43, 27, 61, .08); position: absolute; top: 40px; left: 32px; }
+
+  @media (max-width: 1080px) {
+    .cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 900px) {
+    .hero-in { grid-template-columns: 1fr; }
+    .copy { align-items: flex-start; }
+    .art { max-width: 460px; width: 94%; }
+    .trust-wrap { margin-top: -28px; }
+    .trust { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .trust li { justify-content: flex-start; }
+    .trust li + li { border-left: 0; }
+    .banner { grid-template-columns: 1fr; justify-items: start; }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+    .steps li::after { display: none; }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+    .cats { gap: 12px; }
+    .cat { padding: 8px 8px 46px; border-radius: 18px; }
+    .cat-label { font-size: 12px; padding: 6px 10px; bottom: 10px; }
+    .cat-label :global(svg) { display: none; }
+    .ctas { width: 100%; }
+    .ctas .btn { flex: 1 1 100%; }
+    .trust li { font-size: 14px; gap: 10px; }
+  }
+  @media (max-width: 640px) { .steps { column-gap: 16px; } .steps p { font-size: 14px; } .step-icon { width: 60px; height: 60px; } }
+  @media (max-width: 340px) { .steps { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .cat, .cat-img :global(img) { transition: none; } .cat:hover, .cat:hover .cat-img :global(img) { transform: none; } }
+</style>

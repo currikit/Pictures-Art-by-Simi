@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products, occasions, recipients, categories, wa } from '../data/site';
+---
+<Base title="Shop personalised gifts" description="All of Simi's handmade gifts: hampers, caricatures, photo frames, resin keychains, fridge magnets and wallet cards. Filter by occasion and who it's for.">
+  <section class="intro page-head">
+    <div class="wrap">
+      <p class="eyebrow">Shop</p>
+      <h1 class="h1">Find the perfect gift</h1>
+      <p class="lede">Tell us who it's for and the occasion. Every piece is made to order with your photos and names.</p>
+      <div class="search">
+        <label for="shop-q" class="visually-hidden">Search gifts</label>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="shop-q" type="search" class="search-in" placeholder="Search caricatures, frames, hampers..." autocomplete="off" />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap finder" aria-label="Filter gifts">
+    <fieldset class="group" data-key="for">
+      <legend>Who's it for?</legend>
+      <div class="chips">
+        <button type="button" class="chip" data-val="" aria-pressed="true">Anyone</button>
+        {recipients.map((r) => <button type="button" class="chip" data-val={r.slug} aria-pressed="false">{r.name}</button>)}
+      </div>
+    </fieldset>
+    <fieldset class="group" data-key="occasion">
+      <legend>What's the occasion?</legend>
+      <div class="chips">
+        <button type="button" class="chip" data-val="" aria-pressed="true">Any occasion</button>
+        {occasions.map((o) => <button type="button" class="chip" data-val={o.slug} aria-pressed="false">{o.name}</button>)}
+      </div>
+    </fieldset>
+    <fieldset class="group" data-key="category">
+      <legend>What kind of gift?</legend>
+      <div class="chips">
+        <button type="button" class="chip" data-val="" aria-pressed="true">All kinds</button>
+        {categories.map((c) => <button type="button" class="chip" data-val={c.slug} aria-pressed="false">{c.name}</button>)}
+      </div>
+    </fieldset>
+    <p class="count" aria-live="polite"><span id="count">{products.length}</span> gifts</p>
+  </section>
+
+  <section class="wrap results" aria-label="Gifts">
+    <div class="grid" id="grid">
+      {products.map((p, i) => <ProductCard product={p} eager={i < 4} />)}
+    </div>
+    <div class="empty" id="empty" hidden>
+      <p class="h3">Nothing ready-made for that mix yet.</p>
+      <p class="muted">Simi makes custom pieces too. Tell her what you have in mind.</p>
+      <a class="btn btn-red" href={wa('Hi Simi! I am looking for a custom gift: ')}>Ask Simi on WhatsApp</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0 clamp(48px, 6vw, 88px); }
+  .intro .wrap { display: flex; flex-direction: column; gap: 16px; }
+  .search { margin-top: 8px; display: flex; align-items: center; gap: 12px; max-width: 560px; background: #fff; border-radius: 999px; padding: 0 22px; box-shadow: var(--shadow); color: var(--muted); }
+  .search:focus-within { outline: 3px solid rgba(240, 98, 146, .3); }
+  .search-in { flex: 1; min-width: 0; border: 0; background: transparent; min-height: 56px; font: 400 16px/1.4 var(--font); color: var(--ink); }
+  .search-in:focus { outline: none; }
+  .finder { padding-top: 48px; display: flex; flex-direction: column; gap: 22px; }
+  .group { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .group legend { font-weight: 600; font-size: 17px; padding: 0; margin-bottom: 10px; }
+  @media (max-width: 640px) {
+    .group .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+    .group .chips::-webkit-scrollbar { display: none; }
+    .chip { flex: none; }
+  }
+  .count { margin: 0; color: var(--faded); }
+  .results { padding-block: 28px clamp(56px, 8vw, 96px); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 28px 24px; }
+  @media (max-width: 560px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; } }
+  .empty { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: 32px 0; }
+  .empty p { margin: 0; }
+</style>
+
+<script>
+  const state: Record<string, string> = { for: '', occasion: '', category: '', q: '' };
+  const params = new URLSearchParams(location.search);
+  (['for', 'occasion', 'category', 'q'] as const).forEach((k) => { const v = params.get(k); if (v) state[k] = v; });
+  const qIn = document.getElementById('shop-q') as HTMLInputElement;
+  qIn.value = state.q;
+
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('#grid .card'));
+  const countEl = document.getElementById('count');
+  const empty = document.getElementById('empty');
+
+  function apply() {
+    let n = 0;
+    cards.forEach((c) => {
+      const ok = (!state.for || (c.dataset.for || '').split(' ').includes(state.for))
+        && (!state.occasion || (c.dataset.occasions || '').split(' ').includes(state.occasion))
+        && (!state.category || c.dataset.category === state.category)
+        && (!state.q || state.q.toLowerCase().split(/\s+/).every((w) => (c.dataset.name || '').includes(w)));
+      c.hidden = !ok;
+      if (ok) n++;
+    });
+    if (countEl) countEl.textContent = String(n);
+    if (empty) empty.hidden = n !== 0;
+    document.querySelectorAll<HTMLFieldSetElement>('.group').forEach((g) => {
+      const key = g.dataset.key as string;
+      g.querySelectorAll<HTMLButtonElement>('.chip').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.val || '') === state[key])));
+    });
+    const q = new URLSearchParams();
+    Object.entries(state).forEach(([k, v]) => v && q.set(k, v));
+    history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+  }
+
+  document.querySelectorAll<HTMLFieldSetElement>('.group').forEach((g) => {
+    g.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
+      if (!b) return;
+      state[g.dataset.key as string] = b.dataset.val || '';
+      apply();
+    });
+  });
+  qIn.addEventListener('input', () => { state.q = qIn.value.trim(); apply(); });
+  apply();
+</script>

@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import { faqs, wa, site } from '../data/site';
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.filter((f) => !f.placeholder).map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<Base title="Help and policies" description="How to order from Simi Picsart, delivery across India, payment, and the made-to-order cancellation policy." jsonLd={faqLd}>
+  <section class="intro page-head">
+    <div class="wrap">
+      <h1 class="h1">Help and policies</h1>
+      <p class="lede">Short answers to what people ask most. Anything else, ask Simi on WhatsApp.</p>
+    </div>
+  </section>
+
+  <div class="wrap layout">
+    <nav class="toc" aria-label="On this page">
+      <ul>
+        <li><a href="#questions">Questions</a></li>
+        <li><a href="#cancellation">Cancellation</a></li>
+        <li><a href="#damage">Damaged items</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+      </ul>
+    </nav>
+
+    <div class="content">
+      <section id="questions" aria-labelledby="q-title">
+        <h2 id="q-title" class="h2">Questions</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p class={f.placeholder ? 'placeholder-note' : undefined}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section id="cancellation" aria-labelledby="c-title">
+        <h2 id="c-title" class="h2">Cancellation</h2>
+        <p>Every gift is made by hand for one person, with their photos and names. Once Simi confirms your order and starts making it, it can't be cancelled.</p>
+        <p>You can change details (names, message, photos) until Simi starts. Ask on WhatsApp as early as you can.</p>
+      </section>
+
+      <section id="damage" aria-labelledby="d-title">
+        <h2 id="d-title" class="h2">Damaged items</h2>
+        <p class="placeholder-note">[What happens if a gift arrives damaged: replacement, repair or refund, and how to report it (for example an unboxing video within 24 hours). Waiting for Simi.]</p>
+      </section>
+
+      <section id="privacy" aria-labelledby="p-title">
+        <h2 id="p-title" class="h2">Privacy</h2>
+        <p>This website doesn't store your details or photos. Photos you try on the homepage or pick in the order form stay on your phone. Your order is sent through WhatsApp or email, which you choose, and Simi uses your photos only to make your gift.</p>
+        <p class="placeholder-note">[If analytics is added before launch, mention it here.]</p>
+      </section>
+
+      <div class="ask pol" style="--r:-1deg">
+        <p class="h3">Still have a question?</p>
+        <a class="btn btn-red" href={wa('Hi Simi! I have a question: ')}>Ask on WhatsApp</a>
+        <p class="muted small">Or email <a href={`mailto:${site.email}`}>{site.email}</a></p>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0 clamp(48px, 6vw, 88px); }
+  .intro .wrap { display: flex; flex-direction: column; gap: 14px; }
+  .layout { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; padding-block: 40px clamp(56px, 8vw, 96px); }
+  .toc { flex: 1 1 200px; position: sticky; top: 20px; }
+  .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .toc a { min-height: 44px; display: inline-flex; align-items: center; font-weight: 500; }
+  @media (max-width: 860px) { .toc { position: static; } .toc ul { flex-direction: row; flex-wrap: wrap; gap: 0 20px; } }
+  .content { flex: 999 1 520px; min-width: 0; max-width: 720px; display: flex; flex-direction: column; gap: 48px; }
+  .content section { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 20px; }
+  .content p { margin: 0; }
+  .faq { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  details { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; list-style: none; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-weight: 600; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 26px; font-weight: 400; color: var(--pink-deep); transition: transform 200ms var(--ease); }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { padding: 0 0 18px; }
+  .ask { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding: 24px; }
+  .small { font-size: 15px; }
+</style>

@@ -1,0 +1,174 @@
+---
+import Base from '../layouts/Base.astro';
+import { products, occasions, site } from '../data/site';
+---
+<Base title="Custom order" description="Tell Simi what you want made: the gift, your photos, names, message and delivery date. Sends straight to her WhatsApp." waBar={false}>
+  <section class="intro page-head">
+    <div class="wrap">
+      <h1 class="h1">Tell Simi what to make</h1>
+      <p class="lede">Fill this in once and it opens WhatsApp with everything written out. Attach your photos in the chat.</p>
+    </div>
+  </section>
+
+  <div class="wrap layout">
+    <form id="co" class="form" novalidate>
+      <fieldset class="set">
+        <legend class="h3">The gift</legend>
+        <div class="field">
+          <label for="co-what">What would you like? <span class="req">required</span></label>
+          <select class="select" id="co-what" name="what" required aria-describedby="err-what">
+            <option value="">Choose a gift</option>
+            {products.map((p) => <option value={p.name} data-slug={p.slug}>{p.name}</option>)}
+            <option value="Something custom">Something else, I'll describe it</option>
+          </select>
+          <p class="err" id="err-what" hidden>Choose a gift, or "Something else".</p>
+        </div>
+        <div class="field">
+          <label for="co-occ">Occasion</label>
+          <select class="select" id="co-occ" name="occasion">
+            <option value="">Choose one</option>
+            {occasions.map((o) => <option>{o.name}</option>)}
+          </select>
+        </div>
+        <div class="field">
+          <label for="co-photos">Photos to use</label>
+          <input class="input file" id="co-photos" name="photos" type="file" accept="image/*" multiple aria-describedby="photos-hint" />
+          <p class="hint" id="photos-hint">These stay on your phone. You'll attach them in WhatsApp after this form opens the chat.</p>
+          <div class="thumbs" id="thumbs" aria-live="polite"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="set">
+        <legend class="h3">Words on it</legend>
+        <div class="field"><label for="co-names">Names</label><input class="input" id="co-names" name="names" placeholder="Riya and Kabir" /></div>
+        <div class="field"><label for="co-msg">Message or quote</label><textarea class="textarea" id="co-msg" name="message" placeholder="Everything happened for a reason"></textarea></div>
+        <div class="field"><label for="co-colour">Colours or theme</label><input class="input" id="co-colour" name="colour" placeholder="Pastel pink, black and gold..." /></div>
+      </fieldset>
+
+      <fieldset class="set">
+        <legend class="h3">Delivery</legend>
+        <div class="two">
+          <div class="field"><label for="co-date">Needed by</label><input class="input" id="co-date" name="date" type="date" /></div>
+          <div class="field"><label for="co-pin">Delivery pincode</label><input class="input" id="co-pin" name="pincode" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{6}" maxlength="6" aria-describedby="err-pin" /><p class="err" id="err-pin" hidden>Pincodes have 6 digits.</p></div>
+        </div>
+        <div class="field"><label for="co-city">City</label><input class="input" id="co-city" name="city" autocomplete="address-level2" /></div>
+      </fieldset>
+
+      <fieldset class="set">
+        <legend class="h3">You</legend>
+        <div class="two">
+          <div class="field"><label for="co-you">Your name <span class="req">required</span></label><input class="input" id="co-you" name="you" autocomplete="name" required aria-describedby="err-you" /><p class="err" id="err-you" hidden>Add your name so Simi knows who's asking.</p></div>
+          <div class="field"><label for="co-phone">Phone</label><input class="input" id="co-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" /></div>
+        </div>
+      </fieldset>
+
+      <div class="submit">
+        <button class="btn btn-red" type="submit">Send on WhatsApp</button>
+        <a class="mail" id="mail" href={`mailto:${site.email}`}>Email it instead</a>
+      </div>
+      <p class="sent" id="sent" hidden role="status">WhatsApp should open in a new tab with your order written out. Nothing opened? <a id="sent-link" href="#">Open WhatsApp</a>, then attach your photos.</p>
+      <p class="muted small">Simi replies with the price and delivery date before starting. Made-to-order gifts can't be cancelled once she starts.</p>
+    </form>
+
+    <aside class="aside">
+      <div class="pol note" style="--r:2deg">
+        <p class="big">Not sure what to pick?</p>
+        <p>Describe the person and your budget in the message box. Simi suggests something that fits.</p>
+        <p class="muted">Simi replies on WhatsApp, {site.whatsappDisplay}</p>
+      </div>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0 clamp(48px, 6vw, 88px); }
+  .intro .wrap { display: flex; flex-direction: column; gap: 14px; }
+  .layout { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; padding-block: 40px clamp(56px, 8vw, 96px); }
+  .form { flex: 999 1 520px; min-width: 0; max-width: 720px; display: flex; flex-direction: column; gap: 36px; }
+  .set { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+  .set legend { padding: 0; margin-bottom: 18px; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 18px; }
+  .req { font-weight: 400; font-size: 13px; color: var(--faded); margin-left: 6px; }
+  .err { margin: 0; color: var(--red); font-size: 15px; font-weight: 500; }
+  .file { padding: 10px; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 10px; }
+  .thumbs img { width: 72px; height: 72px; object-fit: cover; background: var(--paper); padding: 4px 4px 12px; box-shadow: 0 4px 10px rgba(26,17,21,.15); }
+  .thumbs img:nth-child(odd) { transform: rotate(-3deg); } .thumbs img:nth-child(even) { transform: rotate(2deg); }
+  .submit { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  .sent { margin: 0; padding: 14px 16px; background: var(--paper); border: 1.5px solid #F2C2D4; border-radius: 14px; }
+  .mail { font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; }
+  .small { font-size: 15px; margin: 0; }
+  .aside { flex: 1 1 260px; min-width: 0; }
+  .note { padding: 28px; max-width: 340px; background: var(--p-mint); box-shadow: none; }
+  .note p { margin: 0 0 10px; }
+  .big { font-size: 20px; font-weight: 700; color: var(--pink-deep); }
+</style>
+
+<script>
+  import { site } from '../data/site';
+  const form = document.getElementById('co') as HTMLFormElement;
+  const what = document.getElementById('co-what') as HTMLSelectElement;
+  const photos = document.getElementById('co-photos') as HTMLInputElement;
+  const thumbs = document.getElementById('thumbs')!;
+  const mail = document.getElementById('mail') as HTMLAnchorElement;
+  const sent = document.getElementById('sent')!;
+  const sentLink = document.getElementById('sent-link') as HTMLAnchorElement;
+
+  const pre = new URLSearchParams(location.search).get('product');
+  if (pre) { const o = what.querySelector<HTMLOptionElement>(`option[data-slug="${CSS.escape(pre)}"]`); if (o) o.selected = true; }
+
+  photos.addEventListener('change', () => {
+    thumbs.querySelectorAll('img').forEach((i) => URL.revokeObjectURL(i.src));
+    thumbs.innerHTML = '';
+    Array.from(photos.files || []).slice(0, 8).forEach((f, i) => {
+      const im = document.createElement('img'); im.src = URL.createObjectURL(f); im.alt = `Photo ${i + 1} you picked`; thumbs.appendChild(im);
+    });
+  });
+
+  function message() {
+    const fd = new FormData(form);
+    const n = (photos.files || []).length;
+    return [
+      'Hi Simi! Custom order from your website:',
+      `Gift: ${fd.get('what')}`,
+      fd.get('occasion') ? `Occasion: ${fd.get('occasion')}` : '',
+      n ? `Photos: ${n} (sending them next)` : '',
+      fd.get('names') ? `Names: ${fd.get('names')}` : '',
+      fd.get('message') ? `Message: ${fd.get('message')}` : '',
+      fd.get('colour') ? `Colours: ${fd.get('colour')}` : '',
+      fd.get('date') ? `Needed by: ${fd.get('date')}` : '',
+      fd.get('city') || fd.get('pincode') ? `Delivery: ${[fd.get('city'), fd.get('pincode')].filter(Boolean).join(' ')}` : '',
+      `From: ${fd.get('you')}${fd.get('phone') ? `, ${fd.get('phone')}` : ''}`,
+    ].filter(Boolean).join('\n');
+  }
+
+  function check() {
+    let first: HTMLElement | null = null;
+    const rules: [string, string, () => boolean][] = [
+      ['co-what', 'err-what', () => !!what.value],
+      ['co-you', 'err-you', () => !!(document.getElementById('co-you') as HTMLInputElement).value.trim()],
+      ['co-pin', 'err-pin', () => { const v = (document.getElementById('co-pin') as HTMLInputElement).value; return !v || /^\d{6}$/.test(v); }],
+    ];
+    rules.forEach(([id, err, ok]) => {
+      const el = document.getElementById(id)!; const e = document.getElementById(err)!;
+      const good = ok(); e.hidden = good; el.setAttribute('aria-invalid', String(!good));
+      if (!good && !first) first = el;
+    });
+    (first as HTMLElement | null)?.focus();
+    return !first;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!check()) return;
+    const url = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(message())}`;
+    // window.open with noopener returns null even when it works, so always show a manual link as well.
+    window.open(url, '_blank', 'noopener');
+    sent.hidden = false;
+    sentLink.href = url;
+  });
+  mail.addEventListener('click', (e) => {
+    if (!check()) { e.preventDefault(); return; }
+    mail.href = `mailto:${site.email}?subject=${encodeURIComponent('Custom order')}&body=${encodeURIComponent(message())}`;
+  });
+</script>

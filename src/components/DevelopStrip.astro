@@ -1,0 +1,101 @@
+---
+import { img, wa } from '../data/site';
+import { getImage } from 'astro:assets';
+const sample = await getImage({ src: img('25-sisters-caricature-canvas.jpg'), width: 640, format: 'webp' });
+---
+<section id="try" class="dev-strip section" aria-labelledby="try-title">
+  <div class="wrap stack-lg">
+    <div class="head">
+      <div class="stack">
+        <p class="eyebrow">Try it before you order</p>
+        <h2 id="try-title" class="h2">See your photo on it first</h2>
+        <p class="lede">Pick a picture and see it on a frame, a magnet, a keychain and a wallet card. It stays on your phone; nothing is uploaded.</p>
+      </div>
+      <div class="actions">
+        <label class="btn btn-ink pick">
+          <span>Pick a photo</span>
+          <input type="file" accept="image/*" class="pick-input" />
+        </label>
+        <button class="btn btn-line replay" type="button">Play again</button>
+      </div>
+    </div>
+
+    <div class="mocks" aria-live="polite">
+      <figure>
+        <div class="m-frame"><div class="m-mat"><img class="dv" src={sample.src} alt="Sample photo in a black photo frame" width="640" height="800" /></div></div>
+        <figcaption>photo frame</figcaption>
+      </figure>
+      <figure>
+        <div class="m-magnet"><img class="dv" style="--d:150ms" src={sample.src} alt="Sample photo as a polaroid fridge magnet" width="640" height="640" /></div>
+        <figcaption>fridge magnet</figcaption>
+      </figure>
+      <figure>
+        <div class="m-ring" aria-hidden="true"></div>
+        <div class="m-key"><img class="dv" style="--d:300ms" src={sample.src} alt="Sample photo set in a round resin keychain" width="640" height="640" /></div>
+        <figcaption>resin keychain</figcaption>
+      </figure>
+      <figure>
+        <div class="m-card"><img class="dv" style="--d:450ms" src={sample.src} alt="Sample photo printed on a wallet card" width="640" height="404" /><span class="m-line">you're my happy place</span></div>
+        <figcaption>wallet card</figcaption>
+      </figure>
+    </div>
+
+    <p class="after">Like one? Message Simi on WhatsApp and attach the same photo. <a href={wa('Hi Simi! I tried my photo on your website. I would like a ')}>Start the chat</a></p>
+  </div>
+</section>
+
+<style>
+  .stack-lg { display: flex; flex-direction: column; gap: 32px; }
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
+  .head .stack { flex: 1 1 380px; min-width: 0; gap: 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pick { position: relative; overflow: hidden; }
+  .pick:focus-within { outline: 2px solid var(--glow); outline-offset: 3px; }
+  .pick-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-size: 0; }
+  .mocks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 24px; align-items: end; }
+  @media (max-width: 900px) { .mocks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; } }
+  @media (max-width: 640px) { figcaption { font-size: 13px; padding: 5px 10px; } .m-line { font-size: 10px; } }
+  figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
+  figcaption { margin-top: 16px; font-weight: 600; font-size: 15px; background: #fff; padding: 6px 14px; border-radius: 999px; box-shadow: 0 8px 18px -12px rgba(43,27,61,.5); }
+  .dv { width: 100%; height: 100%; object-fit: cover; }
+  .dv.run { animation: develop 1.6s var(--ease) both; animation-delay: var(--d, 0ms); }
+  .m-frame { width: 76%; background: var(--ink); padding: 14px; border-radius: 6px; box-shadow: 0 10px 24px rgba(26,17,21,.25); }
+  .m-mat { background: var(--print); padding: 12px; aspect-ratio: 4 / 5; }
+  .m-magnet { width: 66%; background: var(--paper); border-radius: 8px; padding: 10px 10px 40px; box-shadow: 0 10px 24px rgba(26,17,21,.18); transform: rotate(-3deg); aspect-ratio: 1 / 1.2; }
+  .m-magnet img { aspect-ratio: 1; height: auto; }
+  .m-ring { width: 24px; height: 24px; border: 3px solid #B9A9AE; border-radius: 50%; margin-bottom: -2px; }
+  .m-key { width: 58%; aspect-ratio: 1; border-radius: 50%; padding: 10px; background: rgba(242,184,198,.45); border: 2px solid var(--blush); box-shadow: 0 10px 24px rgba(26,17,21,.18); }
+  .m-key img { border-radius: 50%; aspect-ratio: 1; height: auto; display: block; }
+  .dev-strip { background: linear-gradient(180deg, var(--p-lav) 0%, var(--p-pink-2) 100%); margin-bottom: clamp(64px, 9vw, 120px); }
+  .m-card { position: relative; width: 86%; aspect-ratio: 1.586; border-radius: 14px; border: 5px solid #fff; overflow: hidden; box-shadow: 0 10px 24px rgba(26,17,21,.22); transform: rotate(2deg); }
+  .m-line { position: absolute; left: 12px; bottom: 8px; font-weight: 600; font-size: 13px; color: var(--print); text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+  .after { margin: 0; color: var(--faded); }
+  @media (prefers-reduced-motion: reduce) { .dv.run { animation: none; } }
+</style>
+
+<script>
+  const strip = document.getElementById('try');
+  const imgs = strip ? Array.from(strip.querySelectorAll<HTMLImageElement>('.dv')) : [];
+  const input = strip?.querySelector<HTMLInputElement>('.pick-input');
+  const replay = strip?.querySelector<HTMLButtonElement>('.replay');
+  let current: string | null = null;
+
+  const develop = () => {
+    imgs.forEach((im) => { im.classList.remove('run'); void im.offsetWidth; im.classList.add('run'); });
+  };
+
+  input?.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    if (!f || !f.type.startsWith('image/')) return;
+    if (current) URL.revokeObjectURL(current);
+    current = URL.createObjectURL(f);
+    imgs.forEach((im) => { im.src = current as string; im.alt = im.alt.replace('Sample photo', 'Your photo'); });
+    develop();
+  });
+  replay?.addEventListener('click', develop);
+
+  if (strip && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { develop(); io.disconnect(); } }, { threshold: 0.3 });
+    io.observe(strip);
+  }
+</script>

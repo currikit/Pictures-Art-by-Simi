@@ -1,0 +1,172 @@
+---
+import Base from '../layouts/Base.astro';
+import { hamperBoxes, hamperItems, occasions, site } from '../data/site';
+const groups = [...new Set(hamperItems.map((i) => i.group))];
+---
+<Base title="Hamper builder" description="Pack your own gift hamper: pick a box, add photo prints, treats and little things, and send the list to Simi on WhatsApp." waBar={false}>
+  <section class="intro page-head">
+    <div class="wrap">
+      <h1 class="h1">Pack your own hamper</h1>
+      <p class="lede">Pick a box, fill it, and send the list to Simi. She replies with the price and a date before she starts.</p>
+    </div>
+  </section>
+
+  <div class="wrap builder">
+    <form id="hb" class="steps" novalidate>
+      <fieldset class="step">
+        <legend class="h3"><span class="hand n">1</span> Choose a box</legend>
+        <div class="boxes">
+          {hamperBoxes.map((b, i) => (
+            <label class="box-opt">
+              <input type="radio" name="box" value={b.name} checked={i === 1} />
+              <span class="box-name">{b.name}</span>
+              <span class="box-note">{b.note}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="step">
+        <legend class="h3"><span class="hand n">2</span> Fill it</legend>
+        {groups.map((g) => (
+          <div class="item-group">
+            <p class="group-name">{g}</p>
+            <div class="items">
+              {hamperItems.filter((it) => it.group === g).map((it) => (
+                <label class="item"><input type="checkbox" name="items" value={it.name} /><span>{it.name}</span></label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </fieldset>
+
+      <fieldset class="step">
+        <legend class="h3"><span class="hand n">3</span> Make it theirs</legend>
+        <div class="fields">
+          <div class="field"><label for="hb-name">Their name</label><input class="input" id="hb-name" name="name" autocomplete="off" placeholder="For the name tag" /></div>
+          <div class="field"><label for="hb-occ">Occasion</label>
+            <select class="select" id="hb-occ" name="occasion">
+              <option value="">Choose one</option>
+              {occasions.map((o) => <option>{o.name}</option>)}
+            </select>
+          </div>
+          <div class="field"><label for="hb-date">Needed by</label><input class="input" id="hb-date" name="date" type="date" /></div>
+          <div class="field"><label for="hb-theme">Colour theme</label><input class="input" id="hb-theme" name="theme" placeholder="Pink and white, black and gold..." /></div>
+          <div class="field full"><label for="hb-note">Anything else?</label><textarea class="textarea" id="hb-note" name="note" placeholder="A message for the card, things they love, things to avoid"></textarea></div>
+        </div>
+      </fieldset>
+    </form>
+
+    <aside class="summary" aria-labelledby="sum-title">
+      <div class="sum-in">
+        <h2 id="sum-title" class="h3">Your hamper</h2>
+        <div class="crate" aria-hidden="true">
+          <div class="crate-items" id="crate"></div>
+          <div class="crate-front"><span id="crate-label">Medium box</span></div>
+        </div>
+        <p class="sum-line" aria-live="polite"><span id="sum-count">0 items</span> in a <span id="sum-box">Medium box</span></p>
+        <p class="muted small">Simi confirms the total and delivery date on WhatsApp. Photos can be attached in the chat.</p>
+        <a id="send" class="btn btn-red send" href={`https://wa.me/${site.whatsapp}`}>Send to Simi on WhatsApp</a>
+        <p class="hint-empty muted small" id="hint">Add at least one item first.</p>
+      </div>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0 clamp(48px, 6vw, 88px); }
+  .intro .wrap { display: flex; flex-direction: column; gap: 14px; }
+  .builder { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; padding-block: 40px clamp(56px, 8vw, 96px); }
+  .steps { flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 40px; }
+  .step { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .step legend { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 0; }
+  .n { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--p-pink); color: var(--pink-deep); font-size: 17px; font-weight: 700; }
+  .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 12px; }
+  .box-opt { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 18px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 18px; cursor: pointer; transition: border-color 180ms var(--ease), transform 180ms var(--ease); }
+  .box-opt:hover { transform: translateY(-2px); border-color: #F2C2D4; }
+  .box-opt { padding-left: 46px; }
+  .box-opt input { position: absolute; left: 16px; top: 20px; appearance: none; width: 20px; height: 20px; margin: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--paper); cursor: pointer; }
+  .box-opt input:checked { border: 6px solid var(--red); }
+  .box-opt input:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+  .box-opt:has(input:checked) { border-color: var(--red); box-shadow: inset 0 0 0 1.5px var(--red); }
+  .box-opt:has(input:focus-visible) { outline: 2px solid var(--glow); outline-offset: 3px; }
+  .box-name { font-weight: 600; }
+  .box-note { font-size: 14px; color: var(--faded); }
+  .group-name { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .item-group { margin-bottom: 12px; }
+  .items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .item { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; font-size: 16px; transition: background-color 180ms var(--ease), color 180ms var(--ease); }
+  .item { gap: 10px; padding-left: 12px; }
+  .item input { appearance: none; flex: none; width: 18px; height: 18px; margin: 0; border: 1.5px solid currentColor; border-radius: 4px; background: transparent; cursor: pointer; display: grid; place-content: center; }
+  .item input::before { content: ''; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) scale(0); margin-top: -2px; transition: transform 160ms var(--ease); }
+  .item input:checked { background: var(--pink); border-color: #fff; }
+  .item input:checked::before { transform: rotate(-45deg) scale(1); }
+  .item input:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+  .item:has(input:checked) { background: var(--p-pink); border-color: var(--pink); color: var(--ink); }
+  .item:has(input:focus-visible) { outline: 2px solid var(--glow); outline-offset: 3px; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 18px; }
+  .full { grid-column: 1 / -1; }
+
+  .summary { flex: 1 1 300px; min-width: 0; position: sticky; top: 20px; }
+  .sum-in { background: linear-gradient(160deg, var(--p-pink), var(--p-lav)); color: var(--ink); padding: 28px; border-radius: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .crate { position: relative; height: 200px; }
+  .crate-items { position: absolute; inset: 0 12px 70px; display: flex; flex-wrap: wrap-reverse; align-content: flex-start; justify-content: center; gap: 6px; overflow: hidden; }
+  .crate-items span { background: #fff; color: var(--ink); box-shadow: 0 6px 14px -10px rgba(43,27,61,.5); font-size: 13px; padding: 4px 10px; border-radius: 999px; animation: drop 420ms var(--ease) both; transform-origin: bottom; }
+  .crate-items span:nth-child(3n) { background: var(--p-mint); }
+  .crate-items span:nth-child(4n) { background: var(--p-lemon); }
+  @keyframes drop { from { transform: translateY(-40px) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .crate-front { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; background: #F7B6CC; border-radius: 0 0 18px 18px; border-top: 6px solid var(--pink); display: flex; align-items: center; justify-content: center; }
+  .crate-front span { font-weight: 700; font-size: 17px; color: var(--ink); }
+  .sum-line { margin: 0; font-weight: 600; }
+  .sum-in .muted { color: var(--muted); }
+  .small { font-size: 15px; margin: 0; }
+  .send[aria-disabled='true'] { opacity: .5; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .crate-items span { animation: none; } .box-opt:hover { transform: none; } }
+  @media (max-width: 860px) { .summary { position: static; } }
+</style>
+
+<script>
+  import { site } from '../data/site';
+  const form = document.getElementById('hb') as HTMLFormElement;
+  const crate = document.getElementById('crate')!;
+  const count = document.getElementById('sum-count')!;
+  const boxOut = document.getElementById('sum-box')!;
+  const label = document.getElementById('crate-label')!;
+  const send = document.getElementById('send') as HTMLAnchorElement;
+  const hint = document.getElementById('hint')!;
+  let shown: string[] = [];
+
+  function update() {
+    const fd = new FormData(form);
+    const box = String(fd.get('box') || '');
+    const items = fd.getAll('items').map(String);
+    boxOut.textContent = box; label.textContent = box;
+    count.textContent = `${items.length} ${items.length === 1 ? 'item' : 'items'}`;
+    // keep existing tags, animate only new ones
+    crate.querySelectorAll('span').forEach((s) => { if (!items.includes(s.textContent || '')) s.remove(); });
+    items.filter((i) => !shown.includes(i)).forEach((i) => { const s = document.createElement('span'); s.textContent = i; crate.appendChild(s); });
+    shown = items;
+    const lines = [
+      'Hi Simi! I packed a hamper on your website:',
+      `Box: ${box}`,
+      `Items: ${items.join(', ') || 'none yet'}`,
+      fd.get('name') ? `Name tag: ${fd.get('name')}` : '',
+      fd.get('occasion') ? `Occasion: ${fd.get('occasion')}` : '',
+      fd.get('date') ? `Needed by: ${fd.get('date')}` : '',
+      fd.get('theme') ? `Colour theme: ${fd.get('theme')}` : '',
+      fd.get('note') ? `Note: ${fd.get('note')}` : '',
+      'Could you tell me the price and delivery date?',
+    ].filter(Boolean);
+    send.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`;
+    const ready = items.length > 0;
+    send.setAttribute('aria-disabled', String(!ready));
+    hint.hidden = ready;
+  }
+  send.addEventListener('click', (e) => {
+    if (send.getAttribute('aria-disabled') === 'true') { e.preventDefault(); hint.focus(); }
+  });
+  hint.setAttribute('tabindex', '-1');
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  update();
+</script>

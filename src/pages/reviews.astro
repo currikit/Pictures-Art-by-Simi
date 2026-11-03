@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { reviews, site, img } from '../data/site';
+---
+<Base title="Reviews" description="What Simi's customers say about their personalised gifts: a client voice note, review screenshots and reels from Instagram.">
+  <section class="intro page-head">
+    <div class="wrap intro-in">
+      <div class="stack">
+        <h1 class="h1">Heard from happy clients</h1>
+        <p class="lede">Real messages and voice notes Simi received after delivery.</p>
+      </div>
+      <figure class="voice" aria-labelledby="vn-cap">
+        <div class="vn">
+          {reviews.voiceNote.audio
+            ? <audio controls preload="none" src={reviews.voiceNote.audio}>Client voice note</audio>
+            : <span class="play" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 18 20"><path d="M2 1.5 L16 10 L2 18.5 Z" fill="#FFFFFF"/></svg></span>}
+          <div class="wave" aria-hidden="true">
+            {[10,18,24,14,20,8,22,16,26,12,18,9,21,14,24,11,17,23,13,19].map((h) => <span style={`height:${h}px`}></span>)}
+          </div>
+        </div>
+        <figcaption id="vn-cap">
+          <span class="q">"{reviews.voiceNote.caption}"</span>
+          <span class="placeholder-note small">[Voice note audio file: waiting for Simi]</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="shots-title">
+    <h2 id="shots-title" class="h2 t">Messages from customers</h2>
+    <div class="shots">
+      {reviews.screenshots.map((s, i) => (
+        <figure class="pol shot" style={`--r:${[-2, 1.5, -1][i % 3]}deg`}>
+          <div class="ph"><span class="placeholder-note">[{s.note}]</span></div>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="section wrap reels" aria-labelledby="reels-title">
+    <div class="reels-head">
+      <h2 id="reels-title" class="h2">On Instagram</h2>
+      <p class="muted">Reels load from Instagram only when you ask, to keep this page fast.</p>
+      <button class="btn btn-ink" type="button" id="load-reels">Show the reels</button>
+    </div>
+    <div class="reel-grid" id="reel-grid">
+      {reviews.reels.map((u, i) => (
+        <a class="pol reel" href={u} style={`--r:${[1.5, -2, 1][i]}deg`}>
+          <Image src={img(['10-client-audio-review.jpg', '08-vintage-scrapbook-frame.jpg', '04-black-gingham-frames.jpg'][i])} alt={['Reel: a client audio review over photos of a gift', 'Reel: a vintage frame gifted to a best friend', 'Reel: a black themed polaroid frame'][i]} widths={[320, 480]} sizes="(max-width: 640px) 90vw, 320px" />
+          <span class="cap">watch on Instagram</span>
+        </a>
+      ))}
+    </div>
+    <p><a href={site.instagram}>See every post on {site.instagramHandle}</a></p>
+  </section>
+</Base>
+
+<style>
+  .intro { padding: clamp(56px, 8vw, 104px) 0; }
+  .intro-in { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between; }
+  .intro-in .stack { flex: 1 1 360px; gap: 14px; }
+  .voice { flex: 1 1 360px; max-width: 480px; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .vn { background: #fff; box-shadow: var(--shadow); border-radius: 22px; padding: 18px; display: flex; align-items: center; gap: 16px; }
+  .play { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; opacity: .7; }
+  .vn audio { width: 100%; }
+  .wave { display: flex; align-items: center; gap: 3px; height: 28px; overflow: hidden; }
+  .wave span { width: 3px; background: #F2C2D4; border-radius: 2px; flex: none; }
+  figcaption { display: flex; flex-direction: column; gap: 4px; }
+  .q { font-size: 22px; font-weight: 600; color: var(--pink-deep); }
+  .small { font-size: 14px; }
+
+  .t { margin-bottom: 28px; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 28px; }
+  @media (max-width: 560px) { .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .ph { font-size: 14px; } }
+  .shot { margin: 0; }
+  .ph { aspect-ratio: 3 / 4; background: var(--p-pink-2); border-radius: 14px; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+  .reels { padding-top: 0; display: flex; flex-direction: column; gap: 28px; }
+  .reels-head { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .reels-head p { margin: 0; }
+  .reel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 28px; align-items: start; }
+  .reel .cap { color: var(--red); }
+  .reel-grid :global(iframe) { max-width: 100% !important; min-width: 0 !important; }
+</style>
+
+<script>
+  const btn = document.getElementById('load-reels') as HTMLButtonElement;
+  const grid = document.getElementById('reel-grid')!;
+  btn.addEventListener('click', () => {
+    grid.querySelectorAll<HTMLAnchorElement>('a.reel').forEach((a) => {
+      const q = document.createElement('blockquote');
+      q.className = 'instagram-media';
+      q.setAttribute('data-instgrm-permalink', a.href);
+      q.setAttribute('data-instgrm-version', '14');
+      q.style.cssText = 'margin:0;width:100%;max-width:540px';
+      a.replaceWith(q);
+    });
+    const s = document.createElement('script');
+    s.async = true; s.src = 'https://www.instagram.com/embed.js';
+    document.body.appendChild(s);
+    btn.hidden = true;
+  });
+</script>

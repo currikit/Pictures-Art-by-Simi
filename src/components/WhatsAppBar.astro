@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import { wa } from '../data/site';
+interface Props { message?: string; }
+const { message = 'Hi Simi! I want to order a gift.' } = Astro.props;
+---
+<a class="wa-bar" href={wa(message)} aria-label="Order on WhatsApp">
+  <Icon name="whatsapp" size={22} />
+  <span>Order on WhatsApp</span>
+</a>
+
+<style>
+  /* Phones only: the header carries the WhatsApp button on larger screens. */
+  .wa-bar { display: none; }
+  @media (max-width: 900px) {
+    .wa-bar {
+      position: fixed; z-index: 30; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px;
+      border-radius: 999px; background: var(--pink); color: #fff; font: 600 16px/1 var(--font); text-decoration: none;
+      box-shadow: 0 14px 30px -12px rgba(214, 51, 108, .65);
+      transition: transform 240ms var(--ease);
+    }
+    .wa-bar:hover { color: #fff; background: var(--pink-press); }
+    .wa-bar.tucked { transform: translateY(160%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .wa-bar { transition: none; } }
+</style>
+
+<script>
+  const bar = document.querySelector('.wa-bar');
+  const foot = document.querySelector('footer');
+  if (bar && foot && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => bar.classList.toggle('tucked', e.isIntersecting), { threshold: 0.05 }).observe(foot);
+  }
+</script>
