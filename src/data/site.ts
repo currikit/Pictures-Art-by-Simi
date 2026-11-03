@@ -29,6 +29,10 @@ export const site = {
   domain: { value: 'simipicsart.in', placeholder: true },
 };
 
+// Prefix internal links with the site's folder (empty at a domain root, '/Repo-Name' on GitHub Pages).
+export const BASE = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+export const u = (path: string) => `${BASE}${path}`;
+
 export const wa = (text: string) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 
 export type Occasion = { slug: string; name: string };

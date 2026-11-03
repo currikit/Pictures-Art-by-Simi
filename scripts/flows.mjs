@@ -1,6 +1,8 @@
 // Drive every user flow on the built site and report pass/fail with evidence.
 import { chromium } from 'playwright';
-const BASE = process.argv[2] || 'http://127.0.0.1:4500';
+const BASE = (process.argv[2] || 'http://127.0.0.1:4500').replace(/\/$/, '');
+const ORIGIN = new URL(BASE).origin;
+const BASEPATH = new URL(BASE).pathname.replace(/\/$/, '');
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  :: ' + detail : ''}`); };
 
@@ -11,14 +13,14 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => { if (m.type() === 'error' && !m.location().url.includes('no-such-page')) errors.push(m.text()); });
 const failed = [];
-page.on('requestfailed', (r) => { if (r.url().startsWith(BASE)) failed.push(r.url()); });
-page.on('response', (r) => { if (r.url().startsWith(BASE) && r.status() >= 400 && !r.url().includes('no-such-page')) failed.push(`${r.status()} ${r.url()}`); });
+page.on('requestfailed', (r) => { if (r.url().startsWith(ORIGIN)) failed.push(r.url()); });
+page.on('response', (r) => { if (r.url().startsWith(ORIGIN) && r.status() >= 400 && !r.url().includes('no-such-page')) failed.push(`${r.status()} ${r.url()}`); });
 
 // 1. Every internal link on every page resolves
-const seen = new Set(); const queue = ['/']; const broken = [];
+const seen = new Set(); const queue = [BASEPATH + '/']; const broken = [];
 while (queue.length) {
   const p = queue.shift(); if (seen.has(p)) continue; seen.add(p);
-  const res = await page.goto(BASE + p, { waitUntil: 'domcontentloaded' });
+  const res = await page.goto(ORIGIN + p, { waitUntil: 'domcontentloaded' });
   if (!res || res.status() >= 400) { broken.push(`${p} -> ${res?.status()}`); continue; }
   const hrefs = await page.$$eval('a[href]', (as) => as.map((a) => a.getAttribute('href')));
   for (const h of hrefs) {
@@ -32,7 +34,7 @@ check('All internal links resolve', broken.length === 0, `${seen.size} pages cra
 // 2. One h1 per page, unique titles
 const titles = new Map(); const h1bad = [];
 for (const p of seen) {
-  await page.goto(BASE + p, { waitUntil: 'domcontentloaded' });
+  await page.goto(ORIGIN + p, { waitUntil: 'domcontentloaded' });
   const n = await page.locator('h1').count(); if (n !== 1) h1bad.push(`${p}:${n}`);
   const t = await page.title(); titles.set(t, (titles.get(t) || []).concat(p));
 }
@@ -110,7 +112,7 @@ await page.goto(BASE + '/products/couple-caricature-canvas', { waitUntil: 'domco
 const waHref = await page.locator('.ctas a.btn-red').getAttribute('href');
 check('Product WhatsApp button pre-fills the product name', !!waHref && waHref.startsWith('https://wa.me/919925679329') && decodeURIComponent(waHref).includes('Couple caricature canvas'), decodeURIComponent(waHref || '').slice(0, 90));
 const formLink = await page.locator('.ctas a.btn-line').getAttribute('href');
-await page.goto(BASE + formLink, { waitUntil: 'domcontentloaded' });
+await page.goto(ORIGIN + formLink, { waitUntil: 'domcontentloaded' });
 const selected = await page.locator('#co-what').inputValue();
 check('"Fill the order form" pre-selects the product', selected === 'Couple caricature canvas', `selected=${selected}`);
 

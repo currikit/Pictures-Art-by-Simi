@@ -9,7 +9,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBar from '../components/WhatsAppBar.astro';
-import { site } from '../data/site';
+import { site, u } from '../data/site';
 
 interface Props {
   title: string;
@@ -23,14 +23,14 @@ interface Props {
 const { title, description = site.description, waMessage, jsonLd, noindex = false, waBar = true } = Astro.props;
 const fullTitle = title === site.name ? `${site.name} | Personalised gifts made by hand in Mumbai` : `${title} | ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL('/og.jpg', Astro.site);
+const ogImage = new URL(u('/og.jpg'), Astro.site);
 const business = {
   '@context': 'https://schema.org',
   '@type': 'Store',
   name: site.legalName,
   alternateName: site.name,
   description: site.description,
-  url: Astro.site?.toString(),
+  url: new URL(u('/'), Astro.site).toString(),
   telephone: `+${site.whatsapp}`,
   email: site.email,
   address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressRegion: 'Maharashtra', addressCountry: 'IN' },
@@ -48,7 +48,7 @@ const business = {
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#FFFFFF" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />

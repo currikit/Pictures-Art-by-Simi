@@ -24,8 +24,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: npm ci
+      # Tells Astro where the site lives, e.g. https://currikit.github.io + /Pictures-Art-by-Simi
       - run: npm run build
+        env:
+          SITE: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

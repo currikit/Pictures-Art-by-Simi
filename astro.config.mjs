@@ -1,8 +1,10 @@
 import { defineConfig } from 'astro/config';
 
-// Replace with the real domain once Simi confirms it.
+// SITE and BASE_PATH are set by the GitHub Pages workflow.
+// Locally (and on a custom domain) the site lives at the root.
 export default defineConfig({
-  site: 'https://simipicsart.in',
+  site: process.env.SITE || 'https://simipicsart.in',
+  base: process.env.BASE_PATH || '/',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
 });

@@ -1,28 +1,28 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { site, wa, occasions } from '../data/site';
+import { site, wa, occasions, u } from '../data/site';
 ---
 <footer class="footer">
   <div class="wrap">
     <div class="top">
       <div class="brandcol">
-        <a href="/" class="brand"><Logo /></a>
+        <a href={u('/')} class="brand"><Logo /></a>
         <p class="muted">Personalised gifts made by hand in Mumbai and shipped all over India.</p>
         <a class="btn btn-pink" href={wa('Hi Simi! I want to order a gift.')}><Icon name="whatsapp" size={18} /> Order on WhatsApp</a>
       </div>
       <nav aria-labelledby="f-shop">
         <h2 id="f-shop" class="fh">Shop</h2>
         <ul>
-          <li><a href="/shop">All gifts</a></li>
-          <li><a href="/hamper-builder">Build a hamper</a></li>
-          <li><a href="/custom-order">Custom order</a></li>
-          <li><a href="/#try">Try your photo</a></li>
+          <li><a href={u('/shop')}>All gifts</a></li>
+          <li><a href={u('/hamper-builder')}>Build a hamper</a></li>
+          <li><a href={u('/custom-order')}>Custom order</a></li>
+          <li><a href={u('/#try')}>Try your photo</a></li>
         </ul>
       </nav>
       <nav aria-labelledby="f-occ">
         <h2 id="f-occ" class="fh">Occasions</h2>
-        <ul>{occasions.slice(0, 5).map((o) => <li><a href={`/shop?occasion=${o.slug}`}>{o.name}</a></li>)}</ul>
+        <ul>{occasions.slice(0, 5).map((o) => <li><a href={u(`/shop?occasion=${o.slug}`)}>{o.name}</a></li>)}</ul>
       </nav>
       <div>
         <h2 class="fh">Say hello</h2>
@@ -30,8 +30,8 @@ import { site, wa, occasions } from '../data/site';
           <li><a href={wa('Hi Simi!')}><Icon name="whatsapp" size={18} /> {site.whatsappDisplay}</a></li>
           <li><a href={site.instagram}><Icon name="instagram" size={18} /> {site.instagramHandle}</a></li>
           <li><a href={`mailto:${site.email}`}><Icon name="mail" size={18} /> {site.email}</a></li>
-          <li><a href="/about">About Simi</a></li>
-          <li><a href="/help">Help and policies</a></li>
+          <li><a href={u('/about')}>About Simi</a></li>
+          <li><a href={u('/help')}>Help and policies</a></li>
         </ul>
       </div>
     </div>

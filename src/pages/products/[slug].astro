@@ -2,7 +2,7 @@
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { products, occasions, recipients, categories, img, wa, priceLabel, site, type Product } from '../../data/site';
+import { products, occasions, recipients, categories, img, wa, priceLabel, site, type Product, u } from '../../data/site';
 
 export function getStaticPaths() {
   return products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -25,7 +25,7 @@ const jsonLd = {
 ---
 <Base title={p.name} description={`${p.blurb} Handmade in Mumbai by Simi, shipped all over India.`} waMessage={message} jsonLd={jsonLd}>
   <nav class="wrap crumbs" aria-label="Breadcrumb">
-    <a href="/shop">Shop</a><span aria-hidden="true">/</span><a href={`/shop?category=${p.category}`}>{cat?.name}</a>
+    <a href={u('/shop')}>Shop</a><span aria-hidden="true">/</span><a href={u(`/shop?category=${p.category}`)}>{cat?.name}</a>
   </nav>
 
   <article class="wrap product">
@@ -53,13 +53,13 @@ const jsonLd = {
 
       <div class="ctas">
         <a class="btn btn-red" href={wa(message)}>Order on WhatsApp</a>
-        <a class="btn btn-line" href={`/custom-order?product=${p.slug}`}>Fill the order form</a>
+        <a class="btn btn-line" href={u(`/custom-order?product=${p.slug}`)}>Fill the order form</a>
       </div>
-      {p.photoUpload && <p class="muted small">Want to see your photo on it first? <a href="/#try">Try it on the homepage</a>.</p>}
+      {p.photoUpload && <p class="muted small">Want to see your photo on it first? <a href={u('/#try')}>Try it on the homepage</a>.</p>}
 
       <div class="tags">
-        {occ.map((o) => <a class="chip" href={`/shop?occasion=${o.slug}`}>{o.name}</a>)}
-        {who.map((r) => <a class="chip" href={`/shop?for=${r.slug}`}>{r.name}</a>)}
+        {occ.map((o) => <a class="chip" href={u(`/shop?occasion=${o.slug}`)}>{o.name}</a>)}
+        {who.map((r) => <a class="chip" href={u(`/shop?for=${r.slug}`)}>{r.name}</a>)}
       </div>
     </div>
   </article>

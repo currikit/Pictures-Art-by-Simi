@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import ProductCard from '../components/ProductCard.astro';
 import DevelopStrip from '../components/DevelopStrip.astro';
 import Icon from '../components/Icon.astro';
-import { site, img, wa, products } from '../data/site';
+import { site, img, wa, products, u } from '../data/site';
 
 const cats = [
   { slug: 'hampers', name: 'Hampers', file: '05-rakhi-evil-eye-hamper.jpg', alt: 'Snack hamper in a clear acrylic tote', tint: 'var(--p-pink)', icon: 'gift' },
@@ -31,8 +31,8 @@ const steps = [
         <h1 id="hero-title" class="h1">Turn your memories into <span class="accent">personalised gifts<svg class="heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 27C6 20 2 14 3.5 8.6 5 3.6 11.4 2.4 16 8c4.6-5.6 11-4.4 12.5.6C30 14 26 20 16 27Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></span></h1>
         <p class="lede">Custom hampers, frames, keychains, wallet cards, magnets and caricatures, made by hand with your photos and shipped all over India.</p>
         <div class="ctas">
-          <a class="btn btn-pink" href="/shop"><Icon name="bag" size={18} /> Shop collection <Icon name="arrow" size={18} class="arrow" /></a>
-          <a class="btn btn-line" href="/custom-order"><Icon name="sparkles" size={18} /> Create custom order</a>
+          <a class="btn btn-pink" href={u('/shop')}><Icon name="bag" size={18} /> Shop collection <Icon name="arrow" size={18} class="arrow" /></a>
+          <a class="btn btn-line" href={u('/custom-order')}><Icon name="sparkles" size={18} /> Create custom order</a>
         </div>
       </div>
 
@@ -62,12 +62,12 @@ const steps = [
   <section class="section wrap" aria-labelledby="cat-title">
     <div class="head">
       <h2 id="cat-title" class="h2 underline">Shop by category</h2>
-      <a class="more" href="/shop">View all gifts <Icon name="arrow" size={18} /></a>
+      <a class="more" href={u('/shop')}>View all gifts <Icon name="arrow" size={18} /></a>
     </div>
     <ul class="cats">
       {cats.map((c) => (
         <li>
-          <a class="cat" href={`/shop?category=${c.slug}`} style={`--tint:${c.tint}`}>
+          <a class="cat" href={u(`/shop?category=${c.slug}`)} style={`--tint:${c.tint}`}>
             <span class="cat-img"><Image src={img(c.file)} alt="" widths={[240, 400]} sizes="(max-width: 640px) 30vw, 180px" /></span>
             <span class="cat-label"><Icon name={c.icon} size={16} />{c.name}</span>
           </a>
@@ -85,7 +85,7 @@ const steps = [
         <h2 id="hb-title" class="h2">Build your own custom hamper</h2>
         <p class="muted">Pick your favourites, add a message and choose the box. Simi packs it by hand.</p>
       </div>
-      <a class="btn btn-pink banner-cta" href="/hamper-builder">Build your hamper <Icon name="arrow" size={18} class="arrow" /></a>
+      <a class="btn btn-pink banner-cta" href={u('/hamper-builder')}>Build your hamper <Icon name="arrow" size={18} class="arrow" /></a>
     </div>
   </section>
 
@@ -93,7 +93,7 @@ const steps = [
   <section class="section wrap" aria-labelledby="best-title">
     <div class="head">
       <h2 id="best-title" class="h2 underline">Loved lately</h2>
-      <a class="more" href="/shop">See all {products.length} gifts <Icon name="arrow" size={18} /></a>
+      <a class="more" href={u('/shop')}>See all {products.length} gifts <Icon name="arrow" size={18} /></a>
     </div>
     <div class="grid">
       {best.map((p) => <ProductCard product={p} />)}
@@ -126,7 +126,7 @@ const steps = [
       <span class="quote" aria-hidden="true">“</span>
       <h2 id="rev-title" class="h3 rev-q">"One of the best feedback ever"</h2>
       <p class="muted">That's how Simi captioned a client's voice note after delivery. Hear it, and read more messages from happy customers.</p>
-      <a class="btn btn-line" href="/reviews">Read reviews <Icon name="arrow" size={18} class="arrow" /></a>
+      <a class="btn btn-line" href={u('/reviews')}>Read reviews <Icon name="arrow" size={18} class="arrow" /></a>
     </div>
   </section>
 </Base>

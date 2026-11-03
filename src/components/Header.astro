@@ -1,29 +1,29 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { occasions, wa } from '../data/site';
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+import { occasions, wa, u, BASE } from '../data/site';
+const path = Astro.url.pathname.slice(BASE.length).replace(/\/$/, '') || '/';
 const on = (href: string) => (href === '/' ? path === '/' : path === href || (href === '/shop' && path.startsWith('/products')));
 ---
 <header class="site-header">
   <div class="bar">
-    <a href="/" class="brand"><Logo /></a>
+    <a href={u('/')} class="brand"><Logo /></a>
 
     <nav id="site-nav" class="nav" aria-label="Main">
       <ul class="links">
-        <li><a href="/" aria-current={on('/') ? 'page' : undefined}>Home</a></li>
-        <li><a href="/shop" aria-current={on('/shop') ? 'page' : undefined}>Shop</a></li>
+        <li><a href={u('/')} aria-current={on('/') ? 'page' : undefined}>Home</a></li>
+        <li><a href={u('/shop')} aria-current={on('/shop') ? 'page' : undefined}>Shop</a></li>
         <li class="has-menu">
           <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="occ-menu">Occasions <Icon name="chevron" size={16} /></button>
           <ul id="occ-menu" class="submenu" hidden>
-            {occasions.map((o) => <li><a href={`/shop?occasion=${o.slug}`}>{o.name}</a></li>)}
+            {occasions.map((o) => <li><a href={u(`/shop?occasion=${o.slug}`)}>{o.name}</a></li>)}
           </ul>
         </li>
-        <li><a href="/custom-order" aria-current={on('/custom-order') ? 'page' : undefined}>Custom Order</a></li>
-        <li><a href="/reviews" aria-current={on('/reviews') ? 'page' : undefined}>Reviews</a></li>
-        <li><a href="/about" aria-current={on('/about') ? 'page' : undefined}>About</a></li>
-        <li class="only-mobile"><a href="/hamper-builder" aria-current={on('/hamper-builder') ? 'page' : undefined}>Build a hamper</a></li>
-        <li class="only-mobile"><a href="/help" aria-current={on('/help') ? 'page' : undefined}>Help</a></li>
+        <li><a href={u('/custom-order')} aria-current={on('/custom-order') ? 'page' : undefined}>Custom Order</a></li>
+        <li><a href={u('/reviews')} aria-current={on('/reviews') ? 'page' : undefined}>Reviews</a></li>
+        <li><a href={u('/about')} aria-current={on('/about') ? 'page' : undefined}>About</a></li>
+        <li class="only-mobile"><a href={u('/hamper-builder')} aria-current={on('/hamper-builder') ? 'page' : undefined}>Build a hamper</a></li>
+        <li class="only-mobile"><a href={u('/help')} aria-current={on('/help') ? 'page' : undefined}>Help</a></li>
       </ul>
     </nav>
 
@@ -35,7 +35,7 @@ const on = (href: string) => (href === '/' ? path === '/' : path === href || (hr
   </div>
 
   <div id="site-search" class="search-panel" hidden>
-    <form class="search-form" action="/shop" method="get" role="search">
+    <form class="search-form" action={u('/shop')} method="get" role="search">
       <label for="q" class="visually-hidden">Search gifts</label>
       <Icon name="search" size={20} />
       <input id="q" name="q" type="search" class="search-input" placeholder="Search caricatures, frames, hampers..." autocomplete="off" />

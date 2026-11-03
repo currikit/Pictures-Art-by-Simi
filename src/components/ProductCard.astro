@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
-import { img, priceLabel, categories, type Product } from '../data/site';
+import { img, priceLabel, categories, type Product, u } from '../data/site';
 interface Props { product: Product; eager?: boolean; tint?: string; }
 const { product: p, eager = false } = Astro.props;
 const tints: Record<string, string> = { hampers: 'var(--p-pink)', caricatures: 'var(--p-mint)', frames: 'var(--p-lav)', keychains: 'var(--p-lemon)', magnets: 'var(--p-sky)', cards: 'var(--p-peach)', collectibles: 'var(--p-lav)' };
 const cat = categories.find((c) => c.slug === p.category)?.name;
 ---
-<a class="card" href={`/products/${p.slug}`} style={`--tint:${tints[p.category] ?? 'var(--p-pink)'}`}
+<a class="card" href={u(`/products/${p.slug}`)} style={`--tint:${tints[p.category] ?? 'var(--p-pink)'}`}
    data-category={p.category} data-occasions={p.occasions.join(' ')} data-for={p.for.join(' ')} data-name={`${p.name} ${cat} ${p.blurb}`.toLowerCase()}>
   <span class="ph">
     <Image src={img(p.image)} alt={p.alt} widths={[320, 480, 640]} sizes="(max-width: 640px) 46vw, 280px" loading={eager ? 'eager' : 'lazy'} />
